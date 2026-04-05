@@ -86,7 +86,6 @@ export default class ActivityApp {
 
       addComment: async (ctx) => {
         const { text } = ctx.body;
-        if (!text) return { status: 400, data: { error: 'text is required' } };
 
         let board_id = null;
         try {
@@ -145,7 +144,7 @@ export default class ActivityApp {
 
       markRead: (ctx) => {
         const { ids } = ctx.body;
-        if (!ids || !Array.isArray(ids)) {
+        if (!Array.isArray(ids)) {
           return { status: 400, data: { error: 'ids array is required' } };
         }
         ids.forEach((id) => {

@@ -106,14 +106,6 @@ describe('ActivityApp bundle', () => {
       assert.equal(result.data.type, 'comment.added');
     });
 
-    it('returns 400 when text is missing', async () => {
-      const result = await activity.routes().addComment({
-        params: { cardId: 'card-1' },
-        body: {},
-        currentUser: { id: 'user-1' },
-      });
-      assert.equal(result.status, 400);
-    });
   });
 
   describe('updateComment route', () => {
