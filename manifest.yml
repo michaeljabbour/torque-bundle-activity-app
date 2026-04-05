@@ -71,11 +71,33 @@ interfaces:
 api:
   routes:
     - { method: GET, path: "/api/cards/:cardId/actions", handler: cardActions, auth: true }
-    - { method: POST, path: "/api/cards/:cardId/comments", handler: addComment, auth: true }
-    - { method: PATCH, path: "/api/comments/:commentId", handler: updateComment, auth: true }
+    - method: POST
+      path: "/api/cards/:cardId/comments"
+      handler: addComment
+      auth: true
+      validate:
+        params:
+          cardId: { required: true, type: uuid }
+        body:
+          text: { required: true, type: string, min_length: 1 }
+    - method: PATCH
+      path: "/api/comments/:commentId"
+      handler: updateComment
+      auth: true
+      validate:
+        params:
+          commentId: { required: true, type: uuid }
+        body:
+          text: { required: true, type: string, min_length: 1 }
     - { method: DELETE, path: "/api/comments/:commentId", handler: deleteComment, auth: true }
     - { method: GET, path: /api/notifications, handler: listNotifications, auth: true }
-    - { method: POST, path: /api/notifications/read, handler: markRead, auth: true }
+    - method: POST
+      path: /api/notifications/read
+      handler: markRead
+      auth: true
+      validate:
+        body:
+          ids: { required: true }
 
 behaviors: []
 
