@@ -1,0 +1,90 @@
+name: activity-app
+version: "1.0.0"
+description: "Activity feed, comments, notifications, and real-time broadcast"
+
+schema:
+  tables:
+    actions:
+      columns:
+        id: { type: uuid, primary: true }
+        type: { type: string, null: false }
+        board_id: { type: uuid }
+        card_id: { type: uuid }
+        member_id: { type: uuid }
+        data: { type: string }
+        created_at: { type: timestamp }
+        updated_at: { type: timestamp }
+    notifications:
+      columns:
+        id: { type: uuid, primary: true }
+        user_id: { type: uuid, null: false }
+        action_id: { type: uuid }
+        type: { type: string, null: false }
+        message: { type: string }
+        read: { type: integer, default: 0 }
+        created_at: { type: timestamp }
+        updated_at: { type: timestamp }
+    watchers:
+      columns:
+        id: { type: uuid, primary: true }
+        entity_type: { type: string, null: false }
+        entity_id: { type: uuid, null: false }
+        user_id: { type: uuid, null: false }
+        created_at: { type: timestamp }
+        updated_at: { type: timestamp }
+
+events:
+  publishes: []
+  subscribes:
+    - kanban.card.created
+    - kanban.card.moved
+    - kanban.card.updated
+    - kanban.list.created
+    - kanban.list.reordered
+    - boards.board.created
+    - boards.board.updated
+    - boards.member.added
+    - workspace.workspace.created
+    - kanban.label.created
+    - kanban.checkitem.toggled
+
+intents: []
+
+interfaces:
+  queries:
+    - getCardActions
+    - getBoardActions
+  contracts:
+    getCardActions:
+      description: "Get actions for a card"
+      input: { cardId: { type: uuid, required: true } }
+      output:
+        type: array
+        shape: { id: uuid, type: string, board_id: uuid, card_id: uuid, member_id: uuid, data: string }
+    getBoardActions:
+      description: "Get actions for a board"
+      input: { boardId: { type: uuid, required: true } }
+      output:
+        type: array
+        shape: { id: uuid, type: string, board_id: uuid, card_id: uuid, member_id: uuid, data: string }
+
+api:
+  routes:
+    - { method: GET, path: "/api/cards/:cardId/actions", handler: cardActions, auth: true }
+    - { method: POST, path: "/api/cards/:cardId/comments", handler: addComment, auth: true }
+    - { method: PATCH, path: "/api/comments/:commentId", handler: updateComment, auth: true }
+    - { method: DELETE, path: "/api/comments/:commentId", handler: deleteComment, auth: true }
+    - { method: GET, path: /api/notifications, handler: listNotifications, auth: true }
+    - { method: POST, path: /api/notifications/read, handler: markRead, auth: true }
+
+behaviors: []
+
+ui:
+  script: ui/index.js
+  routes:
+    - { path: /notifications, component: notifications, fetchUrls: ["/api/notifications"] }
+  navigation:
+    - { label: "Notifications", icon: "bell", path: /notifications }
+
+depends_on: [kanban-app]
+optional_deps: [iam]

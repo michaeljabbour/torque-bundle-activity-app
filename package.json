@@ -1,0 +1,15 @@
+{
+  "name": "@torquedev/bundle-activity-app",
+  "version": "0.1.0",
+  "description": "Activity feed, comments, notifications, and real-time broadcast",
+  "type": "module",
+  "main": "logic.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/torque-framework/torque-bundle-activity-app.git"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}
